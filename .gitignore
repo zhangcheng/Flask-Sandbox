@@ -1,2 +1,5 @@
 *.pyc
 *.pyo
+src/config-devel.py
+
+cookies.txt

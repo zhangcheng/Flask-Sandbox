@@ -1,0 +1,9 @@
+from config import Config
+
+class Development(Config):
+    DEBUG = True
+
+    WEIBO_API_BASE_URL = 'https://api.weibo.com'
+    WEIBO_API_KEY = '<your-key>'
+    WEIBO_API_SECRET = '<your-secret>'
+    WEIBO_API_REDIRECT_URI = '<your-redirect-uri>'

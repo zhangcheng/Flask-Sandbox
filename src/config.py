@@ -1,5 +1,5 @@
 # config
 
-class Configuration(object):
+class Config(object):
     DEBUG = True
     SECRET_KEY = 'ABC123'
