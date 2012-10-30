@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 
-
 import time
 
 from bson.objectid import ObjectId
@@ -66,6 +65,15 @@ class AccessToken(Document):
     required_fields = ['token', 'issued_at', 'expire_at']
     default_values = {'issued_at': datetime.utcnow(), 'expire_at': datetime.utcnow() + timedelta(seconds=3600)}
     use_dot_notation = True
+
+
+class Object(Document):
+    __collection__ = 'object'
+    structure = {
+        'type': unicode,
+    }
+    use_dot_notation = True
+    use_schemaless = True
 
 
 class User(Document):
