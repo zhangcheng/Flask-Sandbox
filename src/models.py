@@ -3,6 +3,7 @@
 
 import time
 
+from bson.objectid import ObjectId
 from datetime import datetime, timedelta
 from flask.ext.mongokit import Document
 from hashlib import sha512
@@ -57,10 +58,23 @@ class AccessToken(Document):
     """
     __collection__ = 'access_token'
     structure = {
-    	'token': unicode,
-    	'issued_at': datetime,
-    	'expire_at': datetime,
+        'token': unicode,
+        'user_id': ObjectId,
+        'issued_at': datetime,
+        'expire_at': datetime,
     }
     required_fields = ['token', 'issued_at', 'expire_at']
     default_values = {'issued_at': datetime.utcnow(), 'expire_at': datetime.utcnow() + timedelta(seconds=3600)}
     use_dot_notation = True
+
+
+class User(Document):
+    __collection__ = 'user'
+    structure = {
+        'device_id': unicode,
+        'services': {
+            unicode: dict
+        }
+    }
+    use_dot_notation = True
+    use_schemaless = True

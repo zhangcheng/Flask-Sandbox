@@ -1,7 +1,7 @@
 from flask import Flask
 from flask.ext.environments import Environments
 from flask.ext.mongokit import MongoKit
-from models import AccessToken
+from models import AccessToken, User
 from weibo import Client
 
 
@@ -16,4 +16,4 @@ weiboClient = Client(app.config['WEIBO_API_KEY'],
 					 app.config['WEIBO_API_REDIRECT_URI'])
 
 db = MongoKit(app)
-db.register([AccessToken])
+db.register([AccessToken, User])
