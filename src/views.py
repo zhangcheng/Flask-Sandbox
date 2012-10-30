@@ -1,7 +1,8 @@
 import json
 
 from flask import request, redirect, url_for, render_template, session, make_response
-from app import app, weiboClient
+from app import app, weiboClient, db
+import models
 
 
 @app.route('/login')
@@ -22,3 +23,13 @@ def login():
         finally:
             pass
     return resp
+
+
+@app.route('/token', methods=["GET", "POST"])
+def token():
+    if request.method == 'POST':
+        token = db.AccessToken()
+        token.token = unicode(models.KeyGenerator(32)())
+        token.save()
+        return make_response(token.to_json(), 200)
+    return make_response('', 200)
