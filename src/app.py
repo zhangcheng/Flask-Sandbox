@@ -1,7 +1,9 @@
 from flask import Flask
 from flask.ext.environments import Environments
 from flask.ext.mongokit import MongoKit
+from flask.ext.restful import Resource, Api
 from models import AccessToken, User
+import resources
 from weibo import Client
 
 
@@ -17,3 +19,6 @@ weiboClient = Client(app.config['WEIBO_API_KEY'],
 
 db = MongoKit(app)
 db.register([AccessToken, User])
+
+api = Api(app)
+api.add_resource(resources.Photo, '/photos/<string:id>')
