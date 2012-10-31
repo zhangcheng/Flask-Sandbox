@@ -82,6 +82,19 @@ class User(Document):
         'device_id': unicode,
         'services': {
             unicode: dict
+        },
+        'photos': {
+            'id': int,
+            'photo': {
+                'key': unicode,
+                'owner_id': int,
+                'tags': [{
+                    'id': int,
+                    'created_at': datetime,
+                }],
+                'name': unicode,
+                'created_at': datetime,
+            }
         }
     }
     use_dot_notation = True
