@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 import time
-import config
 import hmac
+from app import app
 from hashlib import sha1
 from base64 import urlsafe_b64encode
 
@@ -10,6 +10,7 @@ try:
   import json
 except ImportError:
   import simplejson as json
+
 
 class Error(Exception):
   pass
@@ -50,10 +51,10 @@ class UploadToken(object):
         return urlsafe_b64encode(json.dumps(params))
 
     def generate_encoded_digest(self, signature):
-        hashed = hmac.new(config.SECRET_KEY, signature, sha1)
+        hashed = hmac.new(app.config['QINIU_SECRET_KEY'], signature, sha1)
         return urlsafe_b64encode(hashed.digest())
 
     def generate_token(self):
         signature = self.generate_signature()
         encoded_digest = self.generate_encoded_digest(signature)
-        return "%s:%s:%s" % (config.ACCESS_KEY, encoded_digest, signature)
+        return "%s:%s:%s" % (app.config['QINIU_ACCESS_KEY'], encoded_digest, signature)
