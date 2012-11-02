@@ -70,8 +70,33 @@ class AccessToken(Document):
 class Object(Document):
     __collection__ = 'object'
     structure = {
+        '_id': long,
         'type': unicode,
     }
+    use_dot_notation = True
+    use_schemaless = True
+
+
+class Reference(Document):
+    __collection__ = 'reference'
+    structure = {
+        '_id': long,
+        'type': int,
+    }
+    use_dot_notation = True
+    use_schemaless = True
+
+
+class Photo(Document):
+    __collection__ = 'photo'
+    structure = {
+        '_id': long,
+        'user_id': long,
+        'key': unicode,
+        'name': unicode,
+        'created_at': datetime,
+    }
+    default_values = {'created_at': datetime.utcnow()}
     use_dot_notation = True
     use_schemaless = True
 
@@ -79,23 +104,13 @@ class Object(Document):
 class User(Document):
     __collection__ = 'user'
     structure = {
+        '_id': long,
+        'username': unicode,
         'device_id': unicode,
         'services': {
             unicode: dict
         },
-        'photos': {
-            'id': int,
-            'photo': {
-                'key': unicode,
-                'owner_id': int,
-                'tags': [{
-                    'id': int,
-                    'created_at': datetime,
-                }],
-                'name': unicode,
-                'created_at': datetime,
-            }
-        }
     }
     use_dot_notation = True
     use_schemaless = True
+    use_autorefs = True

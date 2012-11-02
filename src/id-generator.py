@@ -18,13 +18,13 @@ class Hello(Command):
 		s.connect((host, port))
 
 		while True:
-			if db.Object.find({ 'type': { '$exists' : 'false' } }).count() < 3:
+			if db.Object.find({ 'type': { '$exists' : False } }).count() < 3:
 				s.sendall('\x03')
 				data = s.recv(1024)
 				idList = list(struct.unpack('!QQQ', data))
 				for id in idList:
 					obj = db.Object()
-					obj['_id'] = id
+					obj['_id'] = long(id)
 					obj.save()
 			time.sleep(10)
 
