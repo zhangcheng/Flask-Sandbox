@@ -1,5 +1,6 @@
 *.pyc
 *.pyo
+env/
 src/config-devel.py
 
 cookies.txt

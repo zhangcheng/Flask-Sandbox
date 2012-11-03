@@ -1,6 +1,7 @@
-flask=0.9
-flask-environments=0.1
-Flask-MongoKit=0.6
-mongokit=0.8.1
-pymongo=2.3
-weibo=0.1.5
+flask==0.9
+flask-environments==0.1
+Flask-MongoKit==0.6
+flask-restful==0.1
+mongokit==0.8.1
+pymongo==2.3
+weibo==0.1.5
