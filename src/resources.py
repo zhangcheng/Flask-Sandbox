@@ -3,6 +3,7 @@
 import pytz
 
 from datetime import datetime
+from dateutil import parser
 from flask import request
 from flask.ext.restful import abort, fields, marshal, marshal_with, reqparse, Resource
 
@@ -13,6 +14,7 @@ from vendor import uptoken
 photoParser = reqparse.RequestParser()
 photoParser.add_argument('key', type=unicode, location='form', required=True)
 photoParser.add_argument('name', type=unicode, location='form')
+photoParser.add_argument('created_at', type=unicode, location='form')
 
 serviceParser = reqparse.RequestParser()
 serviceParser.add_argument('name', type=unicode, location='form', required=True)
@@ -66,7 +68,10 @@ class QiniuUrlField(fields.Raw):
 class ISO8601DateTimeField(fields.Raw):
     def format(self, value):
     	fmt = '%Y-%m-%dT%H:%M:%S%z'
-        return pytz.utc.localize(value).strftime(fmt)
+    	if value.tzinfo is not None:
+    		return value.strftime(fmt)
+    	else:
+        	return pytz.utc.localize(value).strftime(fmt)
 
 photo_fields = {
     'id': fields.String(attribute='_id'),
@@ -87,6 +92,9 @@ class Photos(Resource):
 	def post(self, objectId):
 		args = photoParser.parse_args()
 		args.pop('objectId')
+		if args.has_key('created_at'):
+			args['created_at'] = parser.parse(args['created_at']).astimezone(pytz.utc)
+		print args
 		user = db.User.find_one({'user_id': objectId})
 		if not user:
 			abort(404)

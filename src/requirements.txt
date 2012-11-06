@@ -4,4 +4,5 @@ Flask-MongoKit==0.6
 flask-restful==0.1
 mongokit==0.8.1
 pymongo==2.3
+pytz==2012h
 weibo==0.1.5
