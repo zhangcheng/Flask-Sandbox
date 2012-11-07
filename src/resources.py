@@ -11,10 +11,16 @@ from app import db
 from vendor import uptoken
 
 
+paginationParser = reqparse.RequestParser()
+paginationParser.add_argument('since_id', type=unicode)
+paginationParser.add_argument('limit', type=unicode)
+
 photoParser = reqparse.RequestParser()
 photoParser.add_argument('key', type=unicode, location='form', required=True)
 photoParser.add_argument('name', type=unicode, location='form')
-photoParser.add_argument('created_at', type=unicode, location='form')
+photoParser.add_argument('shot_at', type=unicode, location='form')
+photoParser.add_argument('longitude', type=unicode, location='form')
+photoParser.add_argument('latitude', type=unicode, location='form')
 
 serviceParser = reqparse.RequestParser()
 serviceParser.add_argument('name', type=unicode, location='form', required=True)
@@ -77,24 +83,39 @@ photo_fields = {
     'id': fields.String(attribute='_id'),
     'key': QiniuUrlField,
     'created_at': ISO8601DateTimeField,
+    'shot_at': ISO8601DateTimeField,
+    'name': fields.String(),
+    'longitude': fields.String(),
+    'latitude': fields.String(),
 }
 
 
 class Photos(Resource):
 	@marshal_with(photo_fields)
 	def get(self, objectId):
+		args = paginationParser.parse_args()
+		print args
+		since_id = 0
+		if args['since_id']:
+			since_id = long(args['since_id'])
+		limit = 10
+		if args['limit']:
+			limit = int(args['limit'])
 		user = db.User.find_one({'user_id': objectId})
 		if user:
-			return list(db.Photo.find({'user_id': objectId}))
+			if since_id != 0:
+				return list(db.photo.find({'user_id': objectId, '_id': {'$lte': since_id}}).sort('_id', -1).limit(limit))
+			else:
+				return list(db.photo.find({'user_id': objectId}).sort('_id', -1).limit(limit))
 		return None
 
 	@marshal_with(photo_fields)
 	def post(self, objectId):
 		args = photoParser.parse_args()
-		args.pop('objectId')
-		if args.has_key('created_at'):
-			args['created_at'] = parser.parse(args['created_at']).astimezone(pytz.utc)
 		print args
+		args.pop('objectId')
+		if args['shot_at']:
+			args['shot_at'] = parser.parse(args['shot_at']).astimezone(pytz.utc)
 		user = db.User.find_one({'user_id': objectId})
 		if not user:
 			abort(404)
@@ -102,6 +123,7 @@ class Photos(Resource):
 		photo = db.Photo()
 		photo._id = obj['_id']
 		photo.user_id = long(objectId)
+		photo.created_at = datetime.utcnow()
 		for key in args.keys():
 			photo[key] = args[key]
 		photo.save()
